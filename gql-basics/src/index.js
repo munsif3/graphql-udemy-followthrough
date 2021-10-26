@@ -18,7 +18,7 @@ const resolvers = {
       return 'Nike AirMax';
     },
     price() {
-      return 224.99;
+      return 229.99;
     },
     releaseYear() {
       return 2020;
