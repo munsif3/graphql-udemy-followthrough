@@ -3,31 +3,56 @@ import { GraphQLServer } from 'graphql-yoga';
 // Type definitiions- application schema
 const typeDefs = `
     type Query {
+        greeting(name: String, position: String): String!
+				add(num1: Float!, num2: Float!): Float!
+        me: User!
+        post: Post!
+    }
+
+    type User {
+        id: ID!
+        name: String!
+        email: String!
+        age: Int
+    }
+
+    type Post {
+        id: ID!
         title: String!
-        price: Float!
-        releaseYear: Int
-        rating: Float
-        inStock: Boolean!
+        body: String!
+        published: Boolean!
     }
 `;
 
 // Resolvers
 const resolvers = {
   Query: {
-    title() {
-      return 'Nike AirMax';
+    greeting(parent, args, ctx, info) {
+      if (args.name && args.position) {
+        return `Hello ${args.name}, you're my favourite ${args.position}`;
+      }
+      return 'Hello!';
     },
-    price() {
-      return 229.99;
+
+    add(parent, args, ctx, info) {
+      return args.num1 + args.num2;
     },
-    releaseYear() {
-      return 2020;
+
+    me() {
+      return {
+        id: 'ABC-123456',
+        name: 'Munsif M',
+        email: 'munsif@munsif.com',
+      };
     },
-    rating() {
-      return null;
-    },
-    inStock() {
-      return true;
+
+    post() {
+      return {
+        id: 'xya-09876',
+        title: 'How to be happy',
+        body: 'Smile and help others',
+        published: true,
+      };
     },
   },
 };
