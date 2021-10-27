@@ -1,11 +1,50 @@
 import { GraphQLServer } from 'graphql-yoga';
 
+const users = [
+  {
+    id: '123123',
+    name: 'Munsif',
+    email: 'munsif@munsif.com',
+    age: 26,
+  },
+  {
+    id: '123456',
+    name: 'Sara',
+    email: 'sara@sara.com',
+  },
+  {
+    id: '456456',
+    name: 'Jack',
+    email: 'jack@jack.com',
+  },
+];
+
+const posts = [
+  {
+    id: '123',
+    title: 'Apple',
+    body: 'Bite apple',
+    published: true,
+  },
+  {
+    id: '124',
+    title: 'Orange',
+    body: 'Bite orange',
+    published: false,
+  },
+  {
+    id: '125',
+    title: 'Kiwi',
+    body: 'Eat kiwi',
+    published: true,
+  },
+];
+
 // Type definitiions- application schema
 const typeDefs = `
     type Query {
-        greeting(name: String, position: String): String!
-				add(numbers: [Float!]!): Float!
-        grades: [Int!]!
+        users(query: String): [User!]!
+        posts(query: String): [Post!]!
         me: User!
         post: Post!
     }
@@ -28,22 +67,24 @@ const typeDefs = `
 // Resolvers
 const resolvers = {
   Query: {
-    greeting(parent, args, ctx, info) {
-      if (args.name && args.position) {
-        return `Hello ${args.name}, you're my favourite ${args.position}`;
+    users(parent, args, ctx, info) {
+      if (!args.query) {
+        return users;
       }
-      return 'Hello!';
+
+      return users.filter((user) => user.name.toLowerCase().includes(args.query.toLowerCase()));
     },
 
-    add(parent, args, ctx, info) {
-      if (args.numbers.length === 0) {
-        return 0;
+    posts(parent, args, ctx, info) {
+      if (!args.query) {
+        return posts;
       }
-      return args.numbers.reduce((accumulator, currentValue) => accumulator + currentValue);
-    },
 
-    grades(parent, args, ctx, info) {
-      return [78, 89, 93];
+      return posts.filter((post) => {
+        const isTitleMatch = post.title.toLowerCase().includes(args.query.toLowerCase());
+        const isBodyMatch = post.body.toLowerCase().includes(args.query.toLowerCase());
+        return isTitleMatch || isBodyMatch;
+      });
     },
 
     me() {
@@ -57,6 +98,7 @@ const resolvers = {
     post() {
       return {
         id: 'xya-09876',
+
         title: 'How to be happy',
         body: 'Smile and help others',
         published: true,
